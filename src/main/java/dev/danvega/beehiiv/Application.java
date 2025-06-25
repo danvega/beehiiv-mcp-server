@@ -25,8 +25,10 @@ public class Application {
     }
 
     @Bean
-    public List<ToolCallback> beehiivToolCallbacks(PostService postService, PublicationService publicationService, 
-                                                  SubscriptionService subscriptionService, CustomFieldService customFieldService) {
+    public List<ToolCallback> beehiivToolCallbacks(PostService postService,
+                                                   PublicationService publicationService,
+                                                   SubscriptionService subscriptionService,
+                                                   CustomFieldService customFieldService) {
         var postCallbacks = ToolCallbacks.from(postService);
         var publicationCallbacks = ToolCallbacks.from(publicationService);
         var subscriptionCallbacks = ToolCallbacks.from(subscriptionService);
