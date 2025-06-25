@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.danvega</groupId>
 	<artifactId>beehiiv-mcp-server</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>beehiiv-mcp-server</name>
 	<description>Spring AI MCP Server for Beehiiv API</description>
 	<url>https://github.com/danvega/beehiiv-mcp-server</url>
