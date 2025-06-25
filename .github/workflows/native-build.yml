@@ -103,6 +103,8 @@ jobs:
     needs: build-native
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout code
@@ -114,17 +116,23 @@ jobs:
           path: release-assets
 
       - name: Display structure of downloaded files
-        run: ls -la release-assets/
+        run: find release-assets -type f -name "*" | head -20
+
+      - name: Flatten artifacts directory
+        run: |
+          mkdir -p flattened-assets
+          find release-assets -type f \( -name "beehiiv-mcp-server-*" -o -name "*.sha256" \) -exec cp {} flattened-assets/ \;
+          ls -la flattened-assets/
 
       - name: Create release
-        uses: ncipollo/release-action@v1.16.0
+        uses: ncipollo/release-action@v1
         with:
           tag: ${{ github.event.inputs.version || github.ref_name }}
           name: Release ${{ github.event.inputs.version || github.ref_name }}
           draft: false
           prerelease: false
           generateReleaseNotes: true
-          artifacts: "release-assets/**/*"
+          artifacts: "flattened-assets/*"
           body: |
             ## Beehiiv MCP Server - Native Binaries
             
