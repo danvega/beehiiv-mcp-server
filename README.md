@@ -82,7 +82,7 @@ chmod +x beehiiv-mcp-server-*
 **For developers who want to build from source**
 
 ### Prerequisites
-- **Java 24+** ([Download here](https://adoptium.net/))
+- **Java 21+** ([Download here](https://adoptium.net/))
 - **Maven** (included via `./mvnw`)
 
 ### Steps
@@ -118,7 +118,7 @@ Then configure Claude Desktop with:
 Native image compilation creates fast-starting, low-memory executables that don't require Java to run.
 
 ### Prerequisites
-- **Java 24+** with GraalVM ([Download GraalVM](https://www.graalvm.org/downloads/))
+- **Java 21+** with GraalVM ([Download GraalVM](https://www.graalvm.org/downloads/))
 - **Maven** (included via `./mvnw`)
 
 ### Build Native Image
@@ -158,7 +158,7 @@ Use the native binary directly without Java:
 
 ## Prerequisites
 
-- **Java 24+** ([Download here](https://adoptium.net/))
+- **Java 21+** ([Download here](https://adoptium.net/))
 - **Maven** (included via `./mvnw`)
 - **Beehiiv account** with API access
 - **Claude Desktop** ([Download here](https://claude.ai/download))
