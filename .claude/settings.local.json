@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:modelcontextprotocol.io)",
+      "WebFetch(domain:developers.beehiiv.com)",
+      "Bash(mvn:*)",
+      "WebFetch(domain:docs.spring.io)",
+      "Bash(mkdir:*)",
+      "Bash(grep:*)",
+      "Bash(./mvnw test:*)",
+      "Bash(javac:*)",
+      "Bash(java:*)",
+      "Bash(rm:*)"
+    ],
+    "deny": []
+  }
+}

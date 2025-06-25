@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: dev.danvega.beehiiv.subscription.CustomFieldServiceTest$ListCustomFieldsTests
+-------------------------------------------------------------------------------
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 s -- in dev.danvega.beehiiv.subscription.CustomFieldServiceTest$ListCustomFieldsTests

@@ -1,0 +1,8 @@
+/Users/vega/dev/mcp/beehiiv-mcp-server/src/test/java/dev/danvega/beehiiv/ApplicationTests.java
+/Users/vega/dev/mcp/beehiiv-mcp-server/src/test/java/dev/danvega/beehiiv/BaseServiceTest.java
+/Users/vega/dev/mcp/beehiiv-mcp-server/src/test/java/dev/danvega/beehiiv/DataModelSerializationTest.java
+/Users/vega/dev/mcp/beehiiv-mcp-server/src/test/java/dev/danvega/beehiiv/MockApiResponses.java
+/Users/vega/dev/mcp/beehiiv-mcp-server/src/test/java/dev/danvega/beehiiv/post/PostServiceTest.java
+/Users/vega/dev/mcp/beehiiv-mcp-server/src/test/java/dev/danvega/beehiiv/publication/PublicationServiceTest.java
+/Users/vega/dev/mcp/beehiiv-mcp-server/src/test/java/dev/danvega/beehiiv/subscription/CustomFieldServiceTest.java
+/Users/vega/dev/mcp/beehiiv-mcp-server/src/test/java/dev/danvega/beehiiv/subscription/SubscriptionServiceTest.java

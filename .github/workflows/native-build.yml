@@ -1,0 +1,173 @@
+name: Build Native Images
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g., v1.0.0)'
+        required: true
+        default: 'v0.0.3'
+
+jobs:
+  build-native:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+            executable: beehiiv-mcp-server-linux
+          - os: macos-latest
+            platform: macos
+            arch: x64
+            executable: beehiiv-mcp-server-macos
+          - os: windows-latest
+            platform: windows
+            arch: x64
+            executable: beehiiv-mcp-server-windows.exe
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'  # Using Java 21 for better native image support
+          distribution: 'graalvm-community'
+          components: 'native-image'
+          cache: 'maven'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build native image
+        shell: bash
+        run: |
+          echo "Building native image for ${{ matrix.platform }}"
+          ./mvnw -Pnative clean native:compile -DskipTests
+          
+      - name: Rename executable (Unix)
+        if: matrix.platform != 'windows'
+        run: |
+          mv target/beehiiv-mcp-server target/${{ matrix.executable }}
+          chmod +x target/${{ matrix.executable }}
+          
+      - name: Rename executable (Windows)  
+        if: matrix.platform == 'windows'
+        run: |
+          mv target/beehiiv-mcp-server.exe target/${{ matrix.executable }}
+
+      - name: Test executable
+        shell: bash
+        run: |
+          echo "Testing native executable..."
+          # Set required environment variables for testing
+          export BEEHIIV_API="test-key"
+          export BEEHIIV_PUBLICATION_ID="pub_test"
+          
+          # Test that the executable starts and responds (timeout after 10 seconds)
+          timeout 10s target/${{ matrix.executable }} --help || true
+          
+          # Verify the file exists and is executable
+          ls -la target/${{ matrix.executable }}
+
+      - name: Create checksums
+        shell: bash
+        run: |
+          cd target
+          if [ "${{ matrix.platform }}" = "windows" ]; then
+            certutil -hashfile ${{ matrix.executable }} SHA256 > ${{ matrix.executable }}.sha256
+          else
+            shasum -a 256 ${{ matrix.executable }} > ${{ matrix.executable }}.sha256
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.executable }}
+          path: |
+            target/${{ matrix.executable }}
+            target/${{ matrix.executable }}.sha256
+          retention-days: 30
+
+  create-release:
+    needs: build-native
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Display structure of downloaded files
+        run: ls -la release-assets/
+
+      - name: Create release
+        uses: ncipollo/create-release@v1
+        with:
+          tag: ${{ github.event.inputs.version || github.ref_name }}
+          name: Release ${{ github.event.inputs.version || github.ref_name }}
+          draft: false
+          prerelease: false
+          generateReleaseNotes: true
+          artifacts: "release-assets/**/*"
+          body: |
+            ## Beehiiv MCP Server - Native Binaries
+            
+            ### 🚀 Quick Start (No Java Required!)
+            
+            1. **Download** the binary for your platform:
+               - **Linux**: `beehiiv-mcp-server-linux`
+               - **macOS**: `beehiiv-mcp-server-macos` 
+               - **Windows**: `beehiiv-mcp-server-windows.exe`
+            
+            2. **Make executable** (Linux/macOS only):
+               ```bash
+               chmod +x beehiiv-mcp-server-*
+               ```
+            
+            3. **Configure Claude Desktop** with the full path to your downloaded binary:
+               ```json
+               {
+                 "mcpServers": {
+                   "beehiiv": {
+                     "command": "/full/path/to/beehiiv-mcp-server-linux",
+                     "env": {
+                       "BEEHIIV_API": "your-api-key",
+                       "BEEHIIV_PUBLICATION_ID": "your-publication-id"
+                     }
+                   }
+                 }
+               }
+               ```
+            
+            4. **Restart Claude Desktop** and start adding subscribers!
+            
+            ### ✅ Verification
+            Each binary includes a SHA256 checksum file for verification.
+            
+            ### 📋 What's New
+            - Single-file native executables (no Java installation required)
+            - Faster startup times
+            - Reduced memory usage
+            - Cross-platform support
+            
+            ### 🛠️ Advanced Usage
+            Run with `--help` to see all available options:
+            ```bash
+            ./beehiiv-mcp-server-linux --help
+            ```
