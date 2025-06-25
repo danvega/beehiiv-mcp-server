@@ -117,7 +117,7 @@ jobs:
         run: ls -la release-assets/
 
       - name: Create release
-        uses: ncipollo/create-release@v1
+        uses: ncipollo/release-action@v1.16.0
         with:
           tag: ${{ github.event.inputs.version || github.ref_name }}
           name: Release ${{ github.event.inputs.version || github.ref_name }}
